@@ -1,51 +1,42 @@
-FROM ruby:2.3.1 
+# Use a node image as the base
+FROM node:14-alpine
 
+# Install dependencies
+RUN apk update && \
+    apk add --no-cache \
+      bash \
+      build-base \
+      git \
+      tzdata \
+      yarn
+
+# Set the working directory to the React app
 WORKDIR /app
 
-COPY Gemfile Gemfile.lock ./
+# Copy the package.json and yarn.lock files to the container
+COPY package.json  /app/
 
-RUN bundle install
+# Install the dependencies
+RUN npm install
 
+# Copy the Rails app and Gemfile to the container
+COPY ap/ /app/rails-app/
+COPY ap/Gemfile* /app/rails-app/
+
+# Set the working directory to the Rails app
+WORKDIR /app/rails-app
+
+# Install the Rails app dependencies
+RUN sudo bundle install
+
+# Copy the rest of the React app to the container
 COPY . .
 
-#Install nodejs and yarn
+# Build the React app
+RUN npm build
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && \
-    apt-get install -y nodejs yarn
-
-# Install Node.js dependencies
-
-RUN cd src && npm install
-
-# Set environment variables for the Rails application
-
-ENV RAILS_ENV production
-
-ENV RAILS_SERVE_STATIC_FILES true
-
-ENV RAILS_LOG_TO_STDOUT true
-
-ENV DATABASE_URL postgres://postgres:postgres@db:5432
-
-# Precompile assets
-
-RUN bundle exec rake assets:precompile
-
-# Expose port 3000 to the Docker host, so we can access it
-
-# from the outside.
-
+# Expose port 3000 for the Rails server
 EXPOSE 3000
 
-
-# Start the main process.
-
+# Start the Rails server
 CMD ["rails", "server", "-b", "0.0.0.0"]
-
-
-
