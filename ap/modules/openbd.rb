@@ -62,7 +62,7 @@ module OpenBD
 				:レーベル => label(descriptive_detail[:Collection]),
 				:著者 => authors(contributor),
 				:著者（読み） => authors(contributor, :collationkey),
-				:価格 => prices(onix[:ProductSupply][:SupplyDetail][:Price]).to_i,
+				:価格 => prices(onix.dig(:ProductSupply, :SupplyDetail, :Price)).to_i,
 				:判型 => genre(descriptive_detail[:Subject]),
 				:ページ数 => pages(descriptive_detail),
 				:出版社 => publisher(data),
@@ -168,13 +168,13 @@ module OpenBD
 			publising_detail = data[:onix][:PublishingDetail]
 			return publising_detail[:Publisher][:PublisherName] if publising_detail.has_key?(:Publisher)
 			return publising_detail[:Imprint][:ImprintName] if publising_detail.has_key?(:Imprint)
-			data[:Summary][:publisher]
+			data[:summary][:publisher]
 		end
 		
 		def publish_date(data)
-			publising_detail = data[:onix][:PublishingDetail]
-			return publising_detail[:PublishingDate][0][:Date].gsub(/([0-9]{4})([0-9]{2})([0-9]{2})/, '\1-\2-\3') if publising_detail.has_key?(:PublishingDate)
-			data[:Summary][:pubdate]
+			publish_date = data.dig(:onix, :PublishingDetail, :PublishingDate, 0, :Date)
+			return publish_date.gsub(/([0-9]{4})([0-9]{2})([0-9]{2})/, '\1-\2-\3') unless publish_date.nil?
+			data[:summary][:pubdate]
 		end
 
 		def description(data)
