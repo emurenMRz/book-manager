@@ -3,11 +3,13 @@ require 'json'
 require 'net/http'
 
 module OpenBD
+	OPENDB_ORIGIN = "http://api.openbd.jp"
+
 	class << self
 		def get(isbn)
 			raise 'ISBN13のみ指定できます' if isbn.to_s.match('[0-9]{13}(,[0-9]{13})*').nil?
 
-			uri = URI.parse "https://api.openbd.jp/v1/get?isbn=#{isbn}"
+			uri = URI.parse "#{OPENDB_ORIGIN}/v1/get?isbn=#{isbn}"
 			book_data = JSON.parse(Net::HTTP.get(uri), symbolize_names: true)
 
 			# pp book_data
@@ -16,14 +18,14 @@ module OpenBD
 			book_data.map {|data| json2book(data) unless data.nil?}.delete_if{|v| v.nil?}
 		end
 
-		def coverage; JSON.parse Net::HTTP.get URI.parse 'https://api.openbd.jp/v1/coverage'; end
+		def coverage; JSON.parse Net::HTTP.get URI.parse "#{OPENDB_ORIGIN}/v1/coverage"; end
 
 		def gets(isbn)
 			raise 'ISBN13の配列を指定できます' unless isbn.class == Array
 
 			total = 0
 			succeed = 0
-			uri = URI.parse 'http://api.openbd.jp/v1/get'
+			uri = URI.parse "#{OPENDB_ORIGIN}/v1/get"
 			http = Net::HTTP.new uri.host, uri.port
 			# http.set_debug_output $stderr
 			http.start do |conn|

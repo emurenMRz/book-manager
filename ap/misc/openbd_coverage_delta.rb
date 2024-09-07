@@ -8,10 +8,12 @@ ADD_FILE = "#{__dir__}/add.json"
 REMOVE_FILE = "#{__dir__}/remove.json"
 COVERAGE_FILE = "#{__dir__}/coverage.json"
 
+OPENDB_ORIGIN = "http://api.openbd.jp"
+
 puts 'read old coverage...'
 old_coverage = File.exist?(COVERAGE_FILE) ? JSON.parse(File.read(COVERAGE_FILE)) : []
 puts 'load now coverage...'
-now_coverage = JSON.parse(Net::HTTP.get(URI.parse('https://api.openbd.jp/v1/coverage')))
+now_coverage = JSON.parse(Net::HTTP.get(URI.parse("#{OPENDB_ORIGIN}/v1/coverage")))
 
 module Flag
 	NONE = 0x0
@@ -42,7 +44,7 @@ puts "add: #{add.length}, remove: #{remove.length}"
 if ARGV[0] != '-dry'
 	if add.length > 0
 		puts 'output add...'
-		uri = URI.parse "https://api.openbd.jp/v1/get?isbn=#{add.join(',')}"
+		uri = URI.parse "#{OPENDB_ORIGIN}/v1/get?isbn=#{add.join(',')}"
 		books = JSON.parse(Net::HTTP.get(uri))
 		books = [books] if books.class == 'Hash'
 		File.write(ADD_FILE, JSON.dump(books))
