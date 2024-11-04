@@ -88,10 +88,10 @@ module SelfDB
 				primary_key [:isbn]
 			end
 
-			db.run 'CREATE EXTENSION IF NOT EXISTS pgroonga';
-			db.run 'CREATE INDEX IF NOT EXISTS pgroonga_書籍名_index ON 書籍情報 USING pgroonga (書籍名)';
-			db.run 'CREATE INDEX IF NOT EXISTS pgroonga_著者_index ON 書籍情報 USING pgroonga (著者)';
-			db.run 'CREATE INDEX IF NOT EXISTS pgroonga_著者（読み）_index ON 書籍情報 USING pgroonga (著者（読み）)';
+			# db.run 'CREATE EXTENSION IF NOT EXISTS pgroonga';
+			# db.run 'CREATE INDEX IF NOT EXISTS pgroonga_書籍名_index ON 書籍情報 USING pgroonga (書籍名)';
+			# db.run 'CREATE INDEX IF NOT EXISTS pgroonga_著者_index ON 書籍情報 USING pgroonga (著者)';
+			# db.run 'CREATE INDEX IF NOT EXISTS pgroonga_著者（読み）_index ON 書籍情報 USING pgroonga (著者（読み）)';
 			
 			db.create_function :new_bookdata, %{
 				BEGIN
