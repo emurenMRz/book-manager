@@ -426,6 +426,19 @@ module SelfDB
 				basic[:出版社] = params[:出版社] if params.has_key?(:出版社)
 				basic[:発売日] = params[:発売日] if params.has_key?(:発売日)
 
+				_, year, month = */^c?(?<year>[12][0-9]{3})[-\/]?(?<month>[0-9]{1,2})?$/.match(basic[:発売日])
+				if year.nil? or !month.nil? and (month.to_i == 0 or month.to_i > 12)
+					basic.delete(:発売日)
+				else
+					basic[:発売日] = year.dup
+					if month.nil?
+						basic[:発売日] << "-01"
+					else
+						basic[:発売日] << "-#{month}"
+					end
+					basic[:発売日] << "-01"
+				end
+
 				if update
 					BookData.dataset.insert_conflict(:constraint => :書籍情報_pkey, :update => basic, :update_where => {Sequel[:書籍情報][:isbn] => isbn}).insert basic
 				else
