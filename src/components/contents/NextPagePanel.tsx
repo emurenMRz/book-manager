@@ -43,7 +43,7 @@ export default function NextPagePanel(props: Props) {
 	}, [page]);
 
 	let db = "";
-	if (page < meta.coverage.pages) db += "c";
+	if (meta.coverage !== null && page < meta.coverage.pages) db += "c";
 	if (meta.rakuten !== null && page < meta.rakuten.pages) db += "r";
 
 	if (!db.length)
