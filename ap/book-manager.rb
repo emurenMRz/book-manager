@@ -227,13 +227,22 @@ def caching_cover(books)
 		cover_name = File.join(CACHE_DIR, "#{book[:isbn]}.jpg")
 		next if File.exist?(cover_name)
 		Thread.new(uri, cover_name) do |u, n|
-			data = Net::HTTP.get(u)
-			soi, app0, length, id = data[..11].unpack('S! S! S! A5')
-			next unless soi == 0xD8FF && app0 == 0xE0FF && id == 'JFIF'
-			next if data.size == 3185 && Digest::SHA256.hexdigest(data) == '56ef1a38d5ba7980f1a6c08926c931d0feaa12fd837e62d861373921670c3592'
+			begin
+				http = Net::HTTP.new(u.host, u.port)
+				http.open_timeout = 5
+				http.read_timeout = 10
+				res = http.start {|h| h.get(u.request_uri)}
+				data = res.body
 
-			logger.info "caching: #{n}"
-			File.write(n, data)
+				soi, app0, length, id = data[..11].unpack('S! S! S! A5')
+				next unless soi == 0xD8FF && app0 == 0xE0FF && id == 'JFIF'
+				next if data.size == 3185 && Digest::SHA256.hexdigest(data) == '56ef1a38d5ba7980f1a6c08926c931d0feaa12fd837e62d861373921670c3592'
+
+				File.write(n, data)
+				logger.info "caching: #{n}"
+			rescue => e
+				logger.error "caching error: #{n}"
+			end
 		end
 	}.each {|th| th.join unless th.nil?}
 end
