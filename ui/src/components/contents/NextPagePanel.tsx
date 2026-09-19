@@ -40,6 +40,7 @@ export default function NextPagePanel(props: Props) {
 			});
 		});
 		observer.observe(ref.current);
+		return () => observer.disconnect();
 	}, [page]);
 
 	let db = "";

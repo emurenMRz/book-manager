@@ -3,7 +3,7 @@
 		"sourceMap": true,
 		"target": "ES2015",
 		"module": "ES2015",
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"moduleResolution": "bundler",
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,

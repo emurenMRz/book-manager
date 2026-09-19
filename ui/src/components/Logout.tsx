@@ -5,10 +5,12 @@ import { DELETE, setCSRFToken } from "../utility";
 export default function Logout(props: {}) {
 
 	React.useEffect(() => {
+		let cancelled = false;
+		const timer = setTimeout(() => { if (!cancelled) location.reload(); }, 3 * 1000);
 		DELETE("logout")
 			.then(r => {
+				if (cancelled) return;
 				setCSRFToken();
-				setTimeout(() => location.reload(), 3 * 1000);
 				if (!r.ok) throw new Error("Logout response was not OK");
 				const contentType = r.headers.get("Content-Type");
 				if (!contentType || !contentType.includes("application/json"))
@@ -16,11 +18,15 @@ export default function Logout(props: {}) {
 				return r.json();
 			})
 			.then(json => {
+				if (cancelled) return;
 				if (!json.succeed)
 					throw new Error("ログアウト：失敗");
 				console.info("ログアウト：成功");
 			})
-			.catch(console.error);
+			.catch(e => {
+				if (!cancelled) console.error(e);
+			});
+		return () => { cancelled = true; clearTimeout(timer); };
 	}, []);
 
 	return (

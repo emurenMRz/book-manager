@@ -13,6 +13,7 @@ export default function BookImage(props: { isbn: string, alt: string }) {
 			});
 		});
 		observer.observe(refImage.current!);
+		return () => observer.disconnect();
 	}, [imageSrc]);
 
 	return <div className="book-image"><img ref={refImage} data-src={imageSrc} alt={props.alt} /></div>;

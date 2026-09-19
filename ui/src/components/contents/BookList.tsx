@@ -32,8 +32,10 @@ export default function BookList(props: Props = {
 	const [update, setUpdate] = React.useState(0);
 	const [pageMeta, setPageMeta] = React.useState<PageMeta | null>(null);
 	const displayType = React.useContext(DisplayTypeContext);
+	const reqIdRef = React.useRef(0);
 
 	React.useEffect(() => {
+		const reqId = ++reqIdRef.current;
 		let api = props.dataType;
 		let converter = (json: any) => json;
 
@@ -69,15 +71,18 @@ export default function BookList(props: Props = {
 
 		GET(api).then(r => r.json())
 			.then(json => {
+				if (reqId !== reqIdRef.current) return;
 				if (json.error)
 					throw json.error;
 				setBooks(converter(json));
 			})
 			.catch(e => {
+				if (reqId !== reqIdRef.current) return;
 				console.error(e);
 				setBooks([]);
 				setPageMeta(null);
 			});
+		return () => { reqIdRef.current = reqId + 1; };
 	}, [update, props.dataType, props.searchQuery]);
 
 	if (books == null)

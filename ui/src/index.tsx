@@ -1,6 +1,6 @@
 import "./css/style.scss";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { GET, setCSRFToken } from "./utility";
 
 import { UserType, UserTypeContext } from "./components/context/UserType";
@@ -13,7 +13,7 @@ import Contents from "./components/contents/Contents";
 
 import * as BookList from "./components/contents/BookList";
 
-const App = (props: { loggedIn: boolean, userType: UserType }) => {
+const App = (props: { loggedIn: boolean, userType: UserType; }) => {
 	const [loginData, setLoginData] = React.useState({ state: props.loggedIn, userType: props.userType });
 	const [status, setStatus] = React.useState({ mode: "BookList", dataType: BookList.DataType.ToBuyList } as ContentStatus);
 	const [displayType, setDisplayType] = React.useState(DisplayType.Detail as DisplayType);
@@ -35,7 +35,7 @@ const App = (props: { loggedIn: boolean, userType: UserType }) => {
 			</ContentStatusContext.Provider >
 		</UserTypeContext.Provider >
 	);
-}
+};
 
 addEventListener("load", () =>
 	GET("welcome")
@@ -43,7 +43,9 @@ addEventListener("load", () =>
 		.then(json => {
 			if ("_csrf" in json && typeof json._csrf === 'string' && "loggedIn" in json && typeof json.loggedIn === 'boolean') {
 				setCSRFToken(json._csrf);
-				ReactDOM.render(<React.StrictMode><App loggedIn={json.loggedIn} userType={json.userType} /></React.StrictMode>, document.getElementById("root"));
+				const root = document.getElementById("root");
+				if (!root) throw "画面構築に失敗しました";
+				createRoot(root).render(<React.StrictMode><App loggedIn={json.loggedIn} userType={json.userType} /></React.StrictMode>);
 			}
 			else throw "ログインできません";
 		})
