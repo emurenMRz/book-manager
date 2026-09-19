@@ -4,7 +4,7 @@
 		"target": "ES2015",
 		"module": "ES2015",
 		"jsx": "react",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"importHelpers": false,
