@@ -7,10 +7,21 @@
 		"moduleResolution": "node",
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
+		"importHelpers": false,
+		"types": [
+			"vite/client"
+		],
 		"lib": [
 			"ESNext",
 			"DOM"
 		]
-	}
+	},
+	"include": [
+		"src"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"vite.config.ts"
+	]
 }

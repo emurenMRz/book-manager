@@ -1,7 +1,7 @@
 import "./css/style.scss";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import "./utility";
+import { GET, setCSRFToken } from "./utility";
 
 import { UserType, UserTypeContext } from "./components/context/UserType";
 import { ContentStatus, ContentStatusContext } from "./components/context/ContentStatus";

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import BookImage from './BookImage';
+import { PUT, PATCH, DELETE } from '../../utility';
 import { DataType } from './BookList';
 import Portal from '../../Portal';
 

@@ -8,6 +8,20 @@ ISBNを元に蔵書の管理を行うWEBアプリです。
  - Apacheなど適当なhttpd(Proxy機能が必要)
  - Ruby
  - PostgreSQL with PGroonga
+ - Node.js(Vite 5 以上のため Node.js 18 以上)
+
+## ディレクトリ構成
+
+```
+.
+├── ap/    # バックエンド(Sinatra + Puma + Sequel、/api を配信)
+├── ui/    # フロントエンド(React + Vite、ui/dist にビルド)
+│   ├── index.html   # Vite エントリ(ビルドで ui/dist/index.html が生成される)
+│   ├── public/      # 静的ファイル(ogp.jpg、manifest.json、favicon.ico、アイコン群)。
+│   │                  # ビルドで ui/dist のルートにコピーされ、そのまま配信される
+│   └── src/         # React ソース
+└── rc.d/  # FreeBSD rc スクリプト
+```
 
 ## Usage
 
@@ -33,7 +47,22 @@ ISBNを元に蔵書の管理を行うWEBアプリです。
 > bundle exec pumactl start
 ```
 
+### フロントエンドのビルド
+
+`ui`ディレクトリで以下のコマンドを実行します。
+
+```
+> cd ui
+> npm install
+> npm run build   # tsc で型チェックし、ui/dist にビルド
+```
+
+開発中は `npm run dev` で Vite の開発サーバー(既定 http://localhost:5173)を起動できます。
+
 ### WEBサーバの準備
 
-1. Document rootとして`dist`ディレクトリを指定します。
+1. Document rootとして`ui/dist`ディレクトリを指定します。
+   `ui/public`配下の静的ファイル(ogp.jpg、manifest.json、favicon.ico、アイコン群)はビルド時に`ui/dist`のルートへコピーされるため、別途配置は不要です。
 2. Reverse proxy設定等で、`/api`以下へのアクセスを上記APサーバ(`http://localhost:9292`)へ転送するように設定します。
+
+フロントエンドはAPIを相対パス(`api/...`)で呼び出すため、ページはサイトルートで配信する必要があります(変更なし)。

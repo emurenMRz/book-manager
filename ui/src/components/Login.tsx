@@ -1,5 +1,6 @@
 import * as React from "react";
 import { UserType } from "./context/UserType";
+import { GET, POST, setCSRFToken } from "../utility";
 
 export default function Login(props: { handleSucceed: Function }) {
 	const refName = React.createRef<HTMLInputElement>();

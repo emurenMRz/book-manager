@@ -1,5 +1,6 @@
 import * as React from "react";
 import Portal from "../Portal";
+import { DELETE, setCSRFToken } from "../utility";
 
 export default function Logout(props: {}) {
 

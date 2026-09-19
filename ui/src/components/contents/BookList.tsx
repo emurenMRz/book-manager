@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DisplayType, DisplayTypeContext } from "../context/DisplayType";
+import { GET } from "../../utility";
 import DetailCard from "./Card/DetailCard";
 import SimpleCard from "./Card/SimpleCard";
 import ThumbCard from "./Card/ThumbCard";
